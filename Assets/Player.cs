@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -24,6 +25,10 @@ public class Player : MonoBehaviour
     [SerializeField]
     float bulletDistFromPlayer = 3f;
 
+    GunBehaviour.IShoot gun = GunBehaviour.GetBehaviour(0);
+
+    delegate void Shoot();
+
     public float GetExtents() => extents;
 
     void Start()
@@ -42,7 +47,25 @@ public class Player : MonoBehaviour
         //Shooting mechanic
         if (Input.GetButtonDown("Fire1"))
         {
-            Shoot();
+            ShootGun();
+        }
+
+        //debug gun changing ability
+        if(Input.GetKeyDown("1"))
+        {
+            gun = GunBehaviour.GetBehaviour(0);
+        }
+        if (Input.GetKeyDown("2"))
+        {
+            gun = GunBehaviour.GetBehaviour(1);
+        }
+        if (Input.GetKeyDown("3"))
+        {
+            gun = GunBehaviour.GetBehaviour(2);
+        }
+        if (Input.GetKeyDown("4"))
+        {
+            gun = GunBehaviour.GetBehaviour(3);
         }
     }
 
@@ -58,7 +81,7 @@ public class Player : MonoBehaviour
         body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
     }
 
-    void Shoot()
+    void ShootGun()
     {
         //Calculate the angle based on where the mouse is
         //Create an arrow at a set point away from the character in that direction
@@ -86,17 +109,23 @@ public class Player : MonoBehaviour
 
         //Calculate the angle that the arrow should point
         float angleFromFirePoint = Mathf.Rad2Deg * Mathf.Asin(mousePos.x);
-
         Debug.Log("arrow angle: " + angleFromFirePoint);
-        //Quaternion arrowRotatation = Quaternion.Euler(new Vector3(angleFromFirePoint, 0, 0));
 
         //Add the final bullet position to the fireFrom vector
         fireFrom += mousePos;
 
-        GameObject bullet = Instantiate(bulletPrefab, fireFrom, Quaternion.identity);
-        Transform bulletTran = bullet.GetComponent<Transform>();
-        bulletTran.Rotate(angleFromFirePoint, 0f, 0f);
-        Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-        bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
+
+        /*Quaternion arrowRotation = Quaternion.Euler(new Vector3(angleFromFirePoint, 0, 0));
+        //Set the arrow rotation to point in direction from centre of where it was shot from to where the arrow was made
+        arrowRotation = Quaternion.FromToRotation(Vector2.zero, mousePos);*/
+        //^^Dont need rotation if bullets are circles hehe
+
+
+        
+        //GameObject bullet = Instantiate(bulletPrefab, fireFrom, Quaternion.identity);
+        //Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
+        //bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
+        
+        gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity);
     }
 }
