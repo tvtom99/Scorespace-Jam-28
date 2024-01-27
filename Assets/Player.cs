@@ -126,6 +126,6 @@ public class Player : MonoBehaviour
         //Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
         //bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
         
-        gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity);
+        gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GunBehaviour : MonoBehaviour
@@ -5,7 +6,7 @@ public class GunBehaviour : MonoBehaviour
     
     public interface IShoot
     {
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation);
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b);
     }
 
     public static IShoot GetBehaviour(int gun)
@@ -37,7 +38,7 @@ public class GunBehaviour : MonoBehaviour
     public struct Pistol : IShoot
     {
 
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
         {
             float bulletForce = 20f;
 
@@ -49,7 +50,7 @@ public class GunBehaviour : MonoBehaviour
 
     public struct Shotgun : IShoot
     {
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
         {
             float bulletForce = 20f;    //Speed of bullet
             float bulletSpread = 0.1f;  //How close together bullets are when fired
@@ -69,16 +70,37 @@ public class GunBehaviour : MonoBehaviour
 
     public struct MachineGun : IShoot
     {
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
         {
             float bulletForce = 20f;
-            int clipSize = 10;
 
-            for (int i = 0; i < clipSize; i++)
+            IEnumerator co = MultiShot(firePos, mousePos, bulletPrefab, rotation, bulletForce, b);
+            b.StartCoroutine(co);
+        }
+
+        /*void MultiShot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, float bulletForce)
+        {
+            float bulletForce = 15f;
+          
+
+            GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
+            Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
+            bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
+        }*/
+
+        private IEnumerator MultiShot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, float bulletForce, MonoBehaviour b)
+        {
+            int clipSize = 10;
+            float waitTime = 0.01f;
+
+            for(int i = 0; i < clipSize; i++)
             {
+                firePos = (Vector2)b.GetComponent<Transform>().position + mousePos; //Update the position to fire from
+
                 GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
                 Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
                 bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
+                yield return new WaitForSeconds(waitTime);
             }
         }
     }
