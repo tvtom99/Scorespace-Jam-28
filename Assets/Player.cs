@@ -128,6 +128,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    public Vector2 GetPosition()
+    {
+        return gameObject.transform.position;
+    }
+
     //This coroutine waits a specific delay to allow the user to shoot again
     //I know I should have setup the game to have this handled elsewhere but oops >.<
     IEnumerator GunWait(float delay)

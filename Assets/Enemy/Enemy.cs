@@ -57,28 +57,33 @@ public abstract class Enemy : MonoBehaviour
 
     private State state = State.Walking;
 
+    public Enemy()
+    {
+
+    }
+
     public abstract void Shoot();
 
-    public void Walk(GameObject player)
+    public void Walk(Transform playerPos)
     {
-        Transform transform = gameObject.GetComponent<Transform>();
-        Vector2 curPos = transform.position, playerPos = player.GetComponent<Transform>().position;
+        Transform enemyPos = gameObject.GetComponent<Transform>();
+        Vector2 curPos = transform.position;
 
         Vector2 dirToPlayer;
-        dirToPlayer.x =  Mathf.Lerp(curPos.x, playerPos.x, speed);
-        dirToPlayer.y = Mathf.Lerp(curPos.y, playerPos.y, speed);
+        dirToPlayer.x =  Mathf.Lerp(curPos.x, playerPos.position.x, speed);
+        dirToPlayer.y = Mathf.Lerp(curPos.y, playerPos.position.y, speed);
 
         transform.position = dirToPlayer;
     }
 
     private void Update()
     {
-        switch(state)
+        /*switch(state)
         {
             case State.Walking:
-                Walk(new GameObject());
+                Walk(new Transform());
                 break;
-        }
+        }*/
     }
 
 
