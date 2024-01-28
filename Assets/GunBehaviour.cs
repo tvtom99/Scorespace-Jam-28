@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class GunBehaviour : MonoBehaviour
 {
-    
     public interface IShoot
     {
         public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b);
+        public int GetGunNumber();
     }
 
     public static IShoot GetBehaviour(int gun)
@@ -37,6 +37,11 @@ public class GunBehaviour : MonoBehaviour
 
     public struct Pistol : IShoot
     {
+        public int GetGunNumber()
+        {
+            return 1;   //Pistol = 1
+        }
+
 
         public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
         {
@@ -50,6 +55,10 @@ public class GunBehaviour : MonoBehaviour
 
     public struct Shotgun : IShoot
     {
+        public int GetGunNumber()
+        {
+            return 2;   //Shotgun = 2
+        }
         public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
         {
             float bulletForce = 20f;    //Speed of bullet
@@ -70,23 +79,19 @@ public class GunBehaviour : MonoBehaviour
 
     public struct MachineGun : IShoot
     {
+        public int GetGunNumber()
+        {
+            return 3;   //Machinegun = 3
+        }
+
         public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
         {
             float bulletForce = 20f;
 
+            //Create Coroutine that will cause the bellow function to be called with the ability to pause itself during running
             IEnumerator co = MultiShot(firePos, mousePos, bulletPrefab, rotation, bulletForce, b);
-            b.StartCoroutine(co);
+            b.StartCoroutine(co);   //Must use reference to a MonoBehaviour, so that is passed in this function
         }
-
-        /*void MultiShot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, float bulletForce)
-        {
-            float bulletForce = 15f;
-          
-
-            GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
-            Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-            bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
-        }*/
 
         private IEnumerator MultiShot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, float bulletForce, MonoBehaviour b)
         {
@@ -95,12 +100,12 @@ public class GunBehaviour : MonoBehaviour
 
             for(int i = 0; i < clipSize; i++)
             {
-                firePos = (Vector2)b.GetComponent<Transform>().position + mousePos; //Update the position to fire from
+                firePos = (Vector2)b.GetComponent<Transform>().position + mousePos; //Update the position to fire from incase the player has moved
 
                 GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
                 Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
                 bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
-                yield return new WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(waitTime);  //After creating bullets, pause for a time before creating next bullet
             }
         }
     }

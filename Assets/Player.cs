@@ -26,6 +26,10 @@ public class Player : MonoBehaviour
     float bulletDistFromPlayer = 3f;
 
     GunBehaviour.IShoot gun = GunBehaviour.GetBehaviour(0);
+    [SerializeField]
+    float[] gunDelay = {0.5f, 2f, 1f, 1f };   //Pistol, Shotgun, Machine Gun, Sniper
+
+    bool canShoot = true;
 
     delegate void Shoot();
 
@@ -83,49 +87,53 @@ public class Player : MonoBehaviour
 
     void ShootGun()
     {
-        //Calculate the angle based on where the mouse is
-        //Create an arrow at a set point away from the character in that direction
-        //Have the arrow go in that direction
-        //Have the arrow face in that direction
+        //A lot is happening here that could probably be moved into it's own function, but this is a game jam and it works so it stays
 
         //Get the screen position of the mouse
         Vector2 mousePos = Input.mousePosition;
-        Debug.Log("Screen mouse pos: " +  mousePos);
+        //Uncomment for debug; Debug.Log("Screen mouse pos: " +  mousePos);
 
         //Convert the mouse position from screen space to world space
         mousePos = camera.ScreenToWorldPoint(mousePos);
-        Debug.Log("World mouse pos: " + mousePos);
+        //Uncomment for debug; Debug.Log("World mouse pos: " + mousePos);
 
         //Create new Vector2 for where the bullet will fire from
         Vector2 fireFrom = new Vector2(firePoint.position.x, firePoint.position.y);
 
         //Get a vector 'pointing' from fire position to mouse
         mousePos -= fireFrom;
-        Debug.Log("Not-normalized mouse pos: " + mousePos);
+        //Uncomment for debug; Debug.Log("Not-normalized mouse pos: " + mousePos);
 
         //Set the distance from the fire position to be equal to variable 'bulletDistFromPlayer'
         mousePos = mousePos.normalized * bulletDistFromPlayer;
-        Debug.Log("Normalized mouse pos: " + mousePos);
+        //Uncomment for debug; Debug.Log("Normalized mouse pos: " + mousePos);
 
         //Calculate the angle that the arrow should point
         float angleFromFirePoint = Mathf.Rad2Deg * Mathf.Asin(mousePos.x);
-        Debug.Log("arrow angle: " + angleFromFirePoint);
+        //Uncomment for debug; Debug.Log("arrow angle: " + angleFromFirePoint);
 
         //Add the final bullet position to the fireFrom vector
         fireFrom += mousePos;
 
+        //Call the shoot method of whatever gun is currently being used        
+        if (canShoot)
+        {
+            canShoot = false;
+            gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this);
+            StartCoroutine(GunWait(gunDelay[gun.GetGunNumber()]));
+        }
+        else
+        {
+            Debug.Log("cannot shoot!");
+        }
+    }
 
-        /*Quaternion arrowRotation = Quaternion.Euler(new Vector3(angleFromFirePoint, 0, 0));
-        //Set the arrow rotation to point in direction from centre of where it was shot from to where the arrow was made
-        arrowRotation = Quaternion.FromToRotation(Vector2.zero, mousePos);*/
-        //^^Dont need rotation if bullets are circles hehe
-
-
-        
-        //GameObject bullet = Instantiate(bulletPrefab, fireFrom, Quaternion.identity);
-        //Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-        //bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
-        
-        gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this);
+    //This coroutine waits a specific delay to allow the user to shoot again
+    //I know I should have setup the game to have this handled elsewhere but oops >.<
+    IEnumerator GunWait(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        canShoot = true;
+        Debug.Log("Can shoot again");
     }
 }
