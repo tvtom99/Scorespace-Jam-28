@@ -76,7 +76,8 @@ public abstract class Enemy : MonoBehaviour
         switch(state)
         {
             case State.Walking:
-                Walk();
+                Walk(new GameObject());
+                break;
         }
     }
 
