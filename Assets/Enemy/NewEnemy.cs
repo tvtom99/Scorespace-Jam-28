@@ -47,6 +47,7 @@ public class NewEnemy : MonoBehaviour
 
     bool canShoot = true;
     bool onScreen = false;
+    bool alreadyDead = false;
 
     int gunInt;
 
@@ -186,8 +187,9 @@ public class NewEnemy : MonoBehaviour
         StartCoroutine(DamageFlash());
         HP--;
         
-        if(HP <= 0)
+        if(HP <= 0 && !alreadyDead)
         {
+            alreadyDead = true;
             //Add point to leaderboard'
             highscore.AddScore();
 
