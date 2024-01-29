@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  bulletPrefab: {fileID: 7714230891482107025, guid: 9904e1f99a41f5542bda7391e73a76ea, type: 3}
-  enemyBulletPower: 15
+  bulletPrefab: {fileID: 7714230891482107025, guid: 5f58c117ce54c5648b73504f9629ee08, type: 3}
+  enemyBulletPower: 20
   rb: {fileID: 0}
   moveSpeed: 1.5
   bulletDistFromEnemy: 1

@@ -119,6 +119,9 @@ public class GunBehaviour : MonoBehaviour
 
     public static void SetBulletAmmoController(GameObject bullet, AmmoController a)
     {
-        bullet.GetComponent<Bullet>().SetAmmoController(a);
+        if (a != null)
+        {
+            bullet.GetComponent<Bullet>().SetAmmoController(a);
+        }
     }
 }

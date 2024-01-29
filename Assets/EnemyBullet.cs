@@ -1,12 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class EnemyBullet : MonoBehaviour
 {
     [SerializeField, Min(0.01f)]
     float timeToPop = 3f;   //Time until bullets fizzle out
 
-    [SerializeField, Range(1f,2f)]
+    [SerializeField, Range(1f, 2f)]
     float slowDown = 1.02f;
 
     [SerializeField]
@@ -28,8 +29,8 @@ public class Bullet : MonoBehaviour
         {
             //Slow the object down gradually
             gameObject.GetComponent<Rigidbody2D>().velocity /= slowDown;
-            
-            
+
+
             if (Mathf.Abs(rb.velocity.x) < 0.1 && rb.velocity.y < 0.1)
             {
                 gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -37,24 +38,17 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("collided with: " + collision.gameObject);
+        Debug.Log("hit:" + collision.gameObject);
 
-        Debug.Log("was it an enemy?:" + collision.gameObject.GetComponent<NewEnemy>());
-
-        if (collision.gameObject.GetComponent<NewEnemy>() != null)    //if hit enemy
-        {
-            collision.gameObject.GetComponent<NewEnemy>().TakeDamage();
-            Destroy(gameObject);
-        }
-        /*else if (collision.gameObject.GetComponent<Player>() != null) //player been hit
+        if (collision.gameObject.GetComponent<Player>() != null) //player been hit
         {
             Debug.Log("hit playere");
             collision.gameObject.GetComponent<Player>().TakeDamage();
             Destroy(gameObject);
-        }*/
-        else if(collision.gameObject.GetComponent<Bullet>() == null)    //if hit anything other than bullet
+        }
+        else if (collision.gameObject.GetComponent<Bullet>() == null)    //if hit anything other than bullet
         {
             //Probs play the pop animation first, then set a coroutine timer to destroy the bullet
             Destroy(gameObject);
@@ -65,10 +59,5 @@ public class Bullet : MonoBehaviour
     {
         yield return new WaitForSeconds(timeToPop);
         Destroy(gameObject);
-    }
-
-    public void SetAmmoController(AmmoController a)
-    {
-        this.playerAmmo = a; 
     }
 }

@@ -41,6 +41,8 @@ public class NewEnemy : MonoBehaviour
     [SerializeField]
     GameObject pistolAmmo, shotgunAmmo, machinegunAmmo, sniperAmmo;
 
+    Highscore highscore;
+
     int HP;
 
     bool canShoot = true;
@@ -135,6 +137,11 @@ public class NewEnemy : MonoBehaviour
         Mathf.Clamp(rb.velocity.y, 0f, moveSpeed);
     }
 
+    public void SetHighscoreControl(Highscore h)
+    {
+        this.highscore = h;
+    }
+
     IEnumerator TakeShot(Vector2 firePos, Vector2 playerPos, GameObject bulletPrefab, Quaternion q, MonoBehaviour m)
     {
         yield return new WaitForSeconds(0.2f);  //Add delay so that the enemies aren't using aimbot
@@ -182,7 +189,7 @@ public class NewEnemy : MonoBehaviour
         if(HP <= 0)
         {
             //Add point to leaderboard'
-            //TODO
+            highscore.AddScore();
 
             GameObject ammoPack;
 

@@ -39,7 +39,8 @@ public class AmmoController : MonoBehaviour
 
         StickToHudPosition();
 
-        DebugLoadAllAmmo();
+        AddAmmo((int)Random.Range(0f, 2f));
+        //DebugLoadAllAmmo();
         //AddAmmo(0);
     }
 
@@ -111,10 +112,10 @@ public class AmmoController : MonoBehaviour
             Debug.Log(i + " gunObject " + ammo[i]);
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            AddAmmo(1);
-        }
+        //if(Input.GetKeyDown(KeyCode.Space))
+        //{
+            //AddAmmo(1);
+        //}
     }
 
     public void AddAmmo(int ammoTypeIndex)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -42,7 +43,22 @@ public class Player : MonoBehaviour
     [SerializeField]
     Highscore highscore;
 
+    [SerializeField]
+    EnemyControl enemyControl;
+
+    [SerializeField]
+    int maxHP = 5;
+
+    [SerializeField]
+    TextMeshPro gameOver;
+
+    int hp;
+
+    bool gameEnd = false;
+
     bool canShoot = true;
+
+    bool canTakeDamage = true;
 
     bool direction = true; //true = left, false = right
 
@@ -53,6 +69,8 @@ public class Player : MonoBehaviour
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
+        hp = maxHP;
+        gameOver.gameObject.SetActive(false);
     }
 
     void Update()
@@ -86,6 +104,60 @@ public class Player : MonoBehaviour
         {
             gun = GunBehaviour.GetBehaviour(3);
         }
+
+        if(hp <= 0)
+        {
+            GameOver();
+        }
+    }
+
+    void GameOver()
+    {
+        //reset the player position, dont let them move, ask for press spacebar to restart
+        gameOver.gameObject.SetActive(true);
+        enemyControl.GameOver();
+        highscore.GameOver();
+
+        gameEnd = true;
+        canShoot = false;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            gameOver.gameObject.SetActive(false);
+            hp = maxHP;
+            gameEnd = false;
+            canShoot = true;
+            ammoController.AddAmmo((int)Random.Range(0f, 2f));
+            enemyControl.StartGame();
+        }
+        
+    }
+
+    public void TakeDamage()
+    {
+        if(canTakeDamage)
+        {
+            canTakeDamage = false;
+            StartCoroutine(DamageFlash());
+            hp--;
+            Debug.Log("hp is now: " + hp);
+        }
+    }
+
+    IEnumerator DamageFlash()
+    {
+        int flashes = 4;
+        Color ogColour = gameObject.GetComponent<SpriteRenderer>().color;
+
+        for (int i = 0; i < flashes; i++)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.black;
+            yield return new WaitForSeconds(0.1f);
+            gameObject.GetComponent<SpriteRenderer>().color = ogColour;
+        }
+
+        Debug.Log("can now take damage");
+        canTakeDamage = true;
     }
 
     void FixedUpdate()
@@ -97,7 +169,10 @@ public class Player : MonoBehaviour
             vertical *= moveLimiter;
         }
 
-        body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+        if (!gameEnd)
+        {
+            body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+        }
         animator.SetFloat("moveSpeed", Mathf.Abs(((body.velocity.x + body.velocity.y) / 2f)));
 
         UpdateBodyDirection();
