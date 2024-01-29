@@ -103,6 +103,7 @@ public class AmmoType : MonoBehaviour
 
     void UpdateAmmoVisual()
     {
+        //for now this works but consider animating the movement of the ammo
         if(ammoAmount != ammoVisual.Length)
         {
             for(int i = 0; i < ammoVisual.Length; i++)
@@ -154,7 +155,9 @@ public class AmmoType : MonoBehaviour
 
     IEnumerator DestroyWhenEmpy()
     {
+        
         yield return new WaitForSeconds(2f);
+        gameObject.transform.parent.gameObject.GetComponent<AmmoController>().AmmoEmpty();
         Destroy(gameObject);
     }
 }

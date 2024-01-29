@@ -34,13 +34,73 @@ public class AmmoController : MonoBehaviour
 
         StickToHudPosition();
 
+        DebugLoadAllAmmo();
+
         //DEBUG just give the controller 1 pistol ammo
-        ammo[0] = Instantiate(pistolAmmo);
+        /*ammo[0] = Instantiate(machinegunAmmo);
         ammo[0].transform.parent = gameObject.transform;
         ammo[0].transform.localPosition = ammoAnimStartPos;
         ammo[0].transform.localScale = Vector3.zero;
-        ammo[0].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[0], ammoScales[0]);
+        ammo[0].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[0], ammoScales[0]);*/
     }
+
+    void DebugLoadAllAmmo()
+    {
+        for(int i = 0; i < ammo.Length; i++)
+        {
+            GameObject a = GetAmmoForLoad(i);
+            ammo[i] = Instantiate(a);
+            ammo[i].transform.parent = gameObject.transform;
+            ammo[i].transform.localPosition = ammoAnimStartPos;
+            ammo[i].transform.localScale = Vector3.zero;
+            ammo[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
+        }
+    }
+    
+    GameObject GetAmmoForLoad(int i)
+    {
+        //dont even comment on this, man. I know what a switch is. I just didnt use it
+        if(i == 0)
+        {
+            return pistolAmmo;
+        }
+        else if (i == 1)
+        {
+            return shotgunAmmo;
+        }
+        else if (i == 2)
+        {
+            return machinegunAmmo;
+        }
+        else if (i == 3)
+        {
+            return sniperAmmo;
+        }
+        else
+        {
+            return pistolAmmo;
+        }
+    }
+
+    public void AmmoEmpty()
+    {
+        GameObject[] newAmmos = new GameObject[4];
+
+        //This is called by a AmmoType object when it has run out of ammo. Ammo is only ever used from the first position, so shift all the ammo along 1 in array
+        for(int i = 0; i < newAmmos.Length - 1; i++)
+        {
+            Debug.Log("i: " + i + ", i + 1: " + (i + 1));
+
+            newAmmos[i] = new GameObject();
+            newAmmos[i] = ammo[i + 1];
+            newAmmos[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
+            Debug.Log("end loop " + i);
+        }
+
+        ammo[ammo.Length - 1] = null;
+        ammo = newAmmos;
+    }
+
 
     private void Update()
     {
@@ -51,8 +111,6 @@ public class AmmoController : MonoBehaviour
     {
         GameObject ammoType = GetAmmoType(ammo);
         ammoType = Instantiate(ammoType);
-
-
     }
 
     GameObject GetAmmoType(int ammo)
