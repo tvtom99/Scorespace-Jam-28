@@ -22,11 +22,13 @@ public class AmmoType : MonoBehaviour
     [SerializeField]
     Vector3 ammoVisualScale = new Vector3(1f, 1f, 1f);
 
-    Vector3 endPos;
+    public Vector3 endPos;
 
-    Vector3 endScale;
+    public Vector3 endScale;
 
     GameObject[] ammoVisual;
+
+    bool ended = false;
 
     // Start is called before the first frame update
     void Start()
@@ -48,13 +50,17 @@ public class AmmoType : MonoBehaviour
         AnimateIn();
         UpdateAmmoVisual();
         KeepAmmoVisualInPosition();
-        CheckIfUsedAllAmmo();
+        if (!ended)
+        {
+            CheckIfUsedAllAmmo();
+        }
     }
 
     void CheckIfUsedAllAmmo()
     {
         if(ammoAmount <= 0)
         {
+            ended = true;
             endScale = Vector3.zero;
             endPos = new Vector3(-3, 0, 0);
             animationSpeed = 1f;
@@ -69,7 +75,7 @@ public class AmmoType : MonoBehaviour
         //While not at ideal position, move towards it
         Transform t = gameObject.GetComponent<Transform>();
 
-        if (t.localPosition != endPos && t.localScale != endScale)
+        if (t.localPosition != endPos || t.localScale != endScale)
         {
             Vector3 moveAmount = Vector3.zero;
             moveAmount.x = Mathf.Lerp(t.localPosition.x, endPos.x, animationSpeed * Time.deltaTime);
@@ -155,9 +161,8 @@ public class AmmoType : MonoBehaviour
 
     IEnumerator DestroyWhenEmpy()
     {
-        
-        yield return new WaitForSeconds(2f);
         gameObject.transform.parent.gameObject.GetComponent<AmmoController>().AmmoEmpty();
-        Destroy(gameObject);
+        yield return new WaitForSeconds(2f);
+        //Destroy(gameObject);
     }
 }

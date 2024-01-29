@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +25,10 @@ public class AmmoController : MonoBehaviour
 
     [SerializeField]
     Vector3 ammoAnimStartPos = new Vector3(3, 0, -4);
+
+    int currentClips = 0;
+
+    int maxClips = 4;
 
     GameObject[] ammo = new GameObject[4];
 
@@ -54,7 +59,10 @@ public class AmmoController : MonoBehaviour
             ammo[i].transform.localPosition = ammoAnimStartPos;
             ammo[i].transform.localScale = Vector3.zero;
             ammo[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
+            currentClips++;
         }
+
+        Debug.Log("after giving player all ammo, current clips is: " + currentClips);
     }
     
     GameObject GetAmmoForLoad(int i)
@@ -86,25 +94,40 @@ public class AmmoController : MonoBehaviour
     {
         GameObject[] newAmmos = new GameObject[4];
 
+        //Destroy the current ammo object
+        GameObject toDestroy = ammo[0];
+        ammo[0] = null;
+        StartCoroutine(ByeBullet(toDestroy));
+
         //This is called by a AmmoType object when it has run out of ammo. Ammo is only ever used from the first position, so shift all the ammo along 1 in array
-        for(int i = 0; i < newAmmos.Length - 1; i++)
+        //for(int i = 0; i < newAmmos.Length - (5 - currentClips); i++)
+        for(int i = 0; i < (currentClips - 1); i++)
         {
             Debug.Log("i: " + i + ", i + 1: " + (i + 1));
 
             newAmmos[i] = new GameObject();
+            Debug.Log(i + " " + ammo[i + 1]);
             newAmmos[i] = ammo[i + 1];
             newAmmos[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
             Debug.Log("end loop " + i);
         }
 
-        ammo[ammo.Length - 1] = null;
+        Debug.Log(ammo.Length + ": ammo length. " + currentClips + ": current clips");
+        ammo[currentClips - 1] = null;
         ammo = newAmmos;
+        currentClips--;
     }
 
 
     private void Update()
     {
         StickToHudPosition();
+
+        //FOR DEBUG
+        for (int i = 0;i < ammo.Length;i++)
+        {
+            Debug.Log(i + " gunObject " + ammo[i]);
+        }
     }
 
     void AddAmmo(int ammo)
@@ -147,5 +170,11 @@ public class AmmoController : MonoBehaviour
     {
         Transform t = gameObject.GetComponent<Transform>();
         t.position = camTransform.position + offset;
+    }
+
+    IEnumerator ByeBullet(GameObject g)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Destroy(g);
     }
 }
