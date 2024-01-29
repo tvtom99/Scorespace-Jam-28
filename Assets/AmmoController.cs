@@ -117,7 +117,7 @@ public class AmmoController : MonoBehaviour
         }
     }
 
-    void AddAmmo(int ammoTypeIndex)
+    public void AddAmmo(int ammoTypeIndex)
     {
         //Find the last empty slot in the AmmoController
         int find = 0;
@@ -148,6 +148,24 @@ public class AmmoController : MonoBehaviour
         ammo[i].transform.localScale = Vector3.zero;
         ammo[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
         currentClips++;*/
+    }
+
+    public bool IsFull()
+    {
+        bool full = false;
+
+        int find = 0;
+        while (find < 4 && ammo[find] != null)  //loop until find a null block in ammo array, or hit max ammo size of 4 (this is hardcoded, I know thats bad but pls just let it work until submission)
+        {
+            find++;
+        }
+
+        if (find >= 4)  //if hit 4 then all spots in array must be full
+        {
+            full = true;
+        }
+
+        return full;
     }
 
     GameObject GetAmmoType(int ammo)

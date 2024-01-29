@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PistolPickup : MonoBehaviour
+public class ShotgunPickup : MonoBehaviour
 {
     //yep the component exists
     [SerializeField]

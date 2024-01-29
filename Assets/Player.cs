@@ -184,6 +184,40 @@ public class Player : MonoBehaviour
         return gameObject.transform.position;
     }
 
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        //in business
+        if(collision.gameObject.GetComponent<PistolPickup>() != null)
+        {
+            //hit pistol
+            if(ammoController.IsFull() != true)
+            {
+                ammoController.AddAmmo(0);
+                Destroy(collision.gameObject);
+            }
+        } else if (collision.gameObject.GetComponent<ShotgunPickup>() != null)
+        {
+            //hit shotty
+            if (ammoController.IsFull() != true)
+            {
+                ammoController.AddAmmo(1);
+                Destroy(collision.gameObject);
+            }
+        } else if (collision.gameObject.GetComponent<MachinegunPickup>() != null)
+        {
+            //hit wooper gun
+            if (ammoController.IsFull() != true)
+            {
+                ammoController.AddAmmo(2);
+                Destroy(collision.gameObject);
+            }
+        } 
+        //else if (collision.gameObject.GetComponent<PistolPickup>() != null)
+        //{
+            //hit pistol cause legit im not adding sniper
+        //}
+    }
+
     //This coroutine waits a specific delay to allow the user to shoot again
     //I know I should have setup the game to have this handled elsewhere but oops >.<
     IEnumerator GunWait(float delay)
