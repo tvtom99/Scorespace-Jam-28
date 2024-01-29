@@ -34,15 +34,12 @@ public class AmmoController : MonoBehaviour
 
         StickToHudPosition();
 
+        //DEBUG just give the controller 1 pistol ammo
         ammo[0] = Instantiate(pistolAmmo);
         ammo[0].transform.parent = gameObject.transform;
         ammo[0].transform.localPosition = ammoAnimStartPos;
         ammo[0].transform.localScale = Vector3.zero;
         ammo[0].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[0], ammoScales[0]);
-        //ammo[0].transform.localPosition = ammoPositions[0];
-        //ammo[0].transform.localScale = ammoScales[0];
-        //ammo[0].GetComponent<Transform>().SetParent(gameObject.GetComponent<Transform>());
-        //ammo[0].GetComponent<Transform>().position = ammoPositions[0];
     }
 
     private void Update()
@@ -81,6 +78,11 @@ public class AmmoController : MonoBehaviour
         }
 
         return ammoType;
+    }
+
+    public GameObject GetCurrentAmmo()
+    {
+        return ammo[0];
     }
 
     void StickToHudPosition()

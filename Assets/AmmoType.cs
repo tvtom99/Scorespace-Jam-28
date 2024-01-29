@@ -46,15 +46,30 @@ public class AmmoType : MonoBehaviour
     void Update()
     {
         AnimateIn();
+        UpdateAmmoVisual();
         KeepAmmoVisualInPosition();
+        CheckIfUsedAllAmmo();
     }
+
+    void CheckIfUsedAllAmmo()
+    {
+        if(ammoAmount <= 0)
+        {
+            endScale = Vector3.zero;
+            endPos = new Vector3(-3, 0, 0);
+            animationSpeed = 1f;
+            Debug.Log("end pos and end scale set for current ammo");
+            StartCoroutine(DestroyWhenEmpy());
+        }
+    }
+
 
     void AnimateIn()
     {
         //While not at ideal position, move towards it
         Transform t = gameObject.GetComponent<Transform>();
 
-        if (t.localPosition != endPos)
+        if (t.localPosition != endPos && t.localScale != endScale)
         {
             Vector3 moveAmount = Vector3.zero;
             moveAmount.x = Mathf.Lerp(t.localPosition.x, endPos.x, animationSpeed * Time.deltaTime);
@@ -73,6 +88,38 @@ public class AmmoType : MonoBehaviour
         }
     }
 
+    public void UseAmmo()
+    {
+        if (ammoAmount > 0)
+        {
+            ammoAmount--;
+        }
+        else
+        {
+            Debug.Log("No ammo");
+            CheckIfUsedAllAmmo();
+        }
+    }
+
+    void UpdateAmmoVisual()
+    {
+        if(ammoAmount != ammoVisual.Length)
+        {
+            for(int i = 0; i < ammoVisual.Length; i++)
+            {
+                Destroy(ammoVisual[i]);
+            }
+
+            ammoVisual = new GameObject[ammoAmount];
+
+            for(int i = 0; i < ammoAmount; i++)
+            {
+                ammoVisual[i] = Instantiate(ammoVisualPrefab);
+                ammoVisual[i].transform.parent = gameObject.transform;
+            }
+        }
+    }
+
     void KeepAmmoVisualInPosition()
     {
         for (int i = 0; i < ammoVisual.Length; i++)
@@ -82,9 +129,32 @@ public class AmmoType : MonoBehaviour
         }
     }
 
+    public int GetGunType()
+    {
+        return ammoType;
+    }
+
+    public bool HasAmmo()
+    {
+        bool rval = false;
+
+        if (ammoAmount > 0)
+        {
+            rval = true;
+        }
+
+        return rval;
+    }
+
     public void SetMovementGoal(Vector3 endPos, Vector3 endScale)
     {
         this.endPos = endPos;
         this.endScale = endScale;
+    }
+
+    IEnumerator DestroyWhenEmpy()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
     }
 }

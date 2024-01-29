@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     float bulletDistFromPlayer = 3f;
 
     GunBehaviour.IShoot gun = GunBehaviour.GetBehaviour(0);
+
     [SerializeField]
     float[] gunDelay = {0.5f, 2f, 1f, 1f };   //Pistol, Shotgun, Machine Gun, Sniper
 
@@ -119,11 +120,22 @@ public class Player : MonoBehaviour
         fireFrom += mousePos;
 
         //Call the shoot method of whatever gun is currently being used        
-        if (canShoot)
+        if (canShoot && ammoController.GetCurrentAmmo().GetComponent<AmmoType>().HasAmmo())
         {
             canShoot = false;
-            gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this, ammoController);
-            StartCoroutine(GunWait(gunDelay[gun.GetGunNumber()]));
+            Debug.Log("gunBehaviour: " + ammoController.GetCurrentAmmo().GetComponent<AmmoType>().GetGunType());
+            GameObject currentAmmo = ammoController.GetCurrentAmmo();
+
+            if (currentAmmo != null)
+            {
+                gun = GunBehaviour.GetBehaviour(currentAmmo.GetComponent<AmmoType>().GetGunType());
+                gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this, ammoController);
+                Debug.Log("Current gun: " + currentAmmo.GetComponent<AmmoType>().GetGunType() + ". current shooting gun: " + gun.GetGunNumber());
+                StartCoroutine(GunWait(gunDelay[currentAmmo.GetComponent<AmmoType>().GetGunType()]));
+                currentAmmo.GetComponent<AmmoType>().UseAmmo();
+                //StartCoroutine(GunWait(gunDelay[gun.GetGunNumber()]));        So apparently 'gun.GetGunNumber()' is scuffed and is returning the wrong number. Instead of fixing it I'll use another function that does that same thing LOLOLLO>
+                
+            }
         }
         else
         {
