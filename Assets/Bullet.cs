@@ -12,6 +12,9 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     AmmoController playerAmmo;
 
+    [SerializeField, Min(0.01f)]
+    float minVelocity = 3f;
+
     private void Awake()
     {
         StartCoroutine(PopBullet(timeToPop));

@@ -22,6 +22,9 @@ public class NewEnemy : MonoBehaviour
     [SerializeField]
     GameObject bulletPrefab;
 
+    [SerializeField]
+    float enemyBulletPower = 10f;
+
     bool canShoot = true;
 
 
@@ -29,7 +32,8 @@ public class NewEnemy : MonoBehaviour
     void Start()
     {
         //Get a random gun
-        int gunInt = (int)Random.Range(0, 4);
+        //int gunInt = (int)Random.Range(0, 4);
+        int gunInt = 0;
         gun = GunBehaviour.GetBehaviour(gunInt);
 
         switch(gunInt)
@@ -80,7 +84,8 @@ public class NewEnemy : MonoBehaviour
 
     IEnumerator TakeShot(Vector2 firePos, Vector2 playerPos, GameObject bulletPrefab, Quaternion q, MonoBehaviour m)
     {
-        gun.Shoot(firePos, playerPos, bulletPrefab, Quaternion.identity, this, null);   //I should probably have the enemies shoot diff bullets hey
+        yield return new WaitForSeconds(0.2f);  //Add delay so that the enemies aren't using aimbot
+        gun.Shoot(firePos, playerPos, bulletPrefab, Quaternion.identity, this, null, enemyBulletPower);   //I should probably have the enemies shoot diff bullets hey
         yield return new WaitForSeconds(1f);
         canShoot = true;
     }

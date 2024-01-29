@@ -5,7 +5,7 @@ public class GunBehaviour : MonoBehaviour
 {
     public interface IShoot
     {
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController ammoController);
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController ammoController, float gunPower);
         public int GetGunNumber();
     }
 
@@ -43,14 +43,18 @@ public class GunBehaviour : MonoBehaviour
         }
 
 
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a, float gunPower)
         {
-            float bulletForce = 20f;
+            Debug.Log("gunpower at start" + gunPower);
+            float bulletForce = gunPower;
+            //bulletForce = 5f;
 
             GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
             SetBulletAmmoController(bullet, a);
             Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
             bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
+
+            Debug.Log("pistol gunpower" + gunPower);
         }
     }
 
@@ -60,9 +64,9 @@ public class GunBehaviour : MonoBehaviour
         {
             return 2;   //Shotgun = 2
         }
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a, float gunPower)
         {
-            float bulletForce = 20f;    //Speed of bullet
+            float bulletForce = gunPower;    //Speed of bullet
             float bulletSpread = 0.1f;  //How close together bullets are when fired
             int bulletAmount = 5;   //How many bullets a shotgun fires
 
@@ -86,9 +90,9 @@ public class GunBehaviour : MonoBehaviour
             return 3;   //Machinegun = 3
         }
 
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a, float gunPower)
         {
-            float bulletForce = 20f;
+            float bulletForce = gunPower;
 
             //Create Coroutine that will cause the bellow function to be called with the ability to pause itself during running
             IEnumerator co = MultiShot(firePos, mousePos, bulletPrefab, rotation, bulletForce, b, a);

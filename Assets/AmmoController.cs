@@ -40,29 +40,15 @@ public class AmmoController : MonoBehaviour
         StickToHudPosition();
 
         DebugLoadAllAmmo();
-
-        //DEBUG just give the controller 1 pistol ammo
-        /*ammo[0] = Instantiate(machinegunAmmo);
-        ammo[0].transform.parent = gameObject.transform;
-        ammo[0].transform.localPosition = ammoAnimStartPos;
-        ammo[0].transform.localScale = Vector3.zero;
-        ammo[0].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[0], ammoScales[0]);*/
+        //AddAmmo(0);
     }
 
     void DebugLoadAllAmmo()
     {
         for(int i = 0; i < ammo.Length; i++)
         {
-            GameObject a = GetAmmoForLoad(i);
-            ammo[i] = Instantiate(a);
-            ammo[i].transform.parent = gameObject.transform;
-            ammo[i].transform.localPosition = ammoAnimStartPos;
-            ammo[i].transform.localScale = Vector3.zero;
-            ammo[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
-            currentClips++;
+            AddAmmo(i);
         }
-
-        Debug.Log("after giving player all ammo, current clips is: " + currentClips);
     }
     
     GameObject GetAmmoForLoad(int i)
@@ -100,19 +86,15 @@ public class AmmoController : MonoBehaviour
         StartCoroutine(ByeBullet(toDestroy));
 
         //This is called by a AmmoType object when it has run out of ammo. Ammo is only ever used from the first position, so shift all the ammo along 1 in array
-        //for(int i = 0; i < newAmmos.Length - (5 - currentClips); i++)
         for(int i = 0; i < (currentClips - 1); i++)
         {
             Debug.Log("i: " + i + ", i + 1: " + (i + 1));
 
             newAmmos[i] = new GameObject();
-            Debug.Log(i + " " + ammo[i + 1]);
             newAmmos[i] = ammo[i + 1];
             newAmmos[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
-            Debug.Log("end loop " + i);
         }
 
-        Debug.Log(ammo.Length + ": ammo length. " + currentClips + ": current clips");
         ammo[currentClips - 1] = null;
         ammo = newAmmos;
         currentClips--;
@@ -128,12 +110,44 @@ public class AmmoController : MonoBehaviour
         {
             Debug.Log(i + " gunObject " + ammo[i]);
         }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            AddAmmo(1);
+        }
     }
 
-    void AddAmmo(int ammo)
+    void AddAmmo(int ammoTypeIndex)
     {
-        GameObject ammoType = GetAmmoType(ammo);
-        ammoType = Instantiate(ammoType);
+        //Find the last empty slot in the AmmoController
+        int find = 0;
+        while (find < 4 && ammo[find] != null)  //loop until find a null block in ammo array, or hit max ammo size of 4 (this is hardcoded, I know thats bad but pls just let it work until submission)
+        {
+            find++;
+        }
+
+        if (find != 4)  //If found null before reaching max
+        {
+            GameObject ammoType = GetAmmoType(ammoTypeIndex);
+            ammoType = Instantiate(ammoType);
+
+            ammo[find] = ammoType;
+            ammo[find].transform.parent = gameObject.transform;
+            ammo[find].transform.localPosition = ammoAnimStartPos;
+            ammo[find].transform.localScale = Vector3.zero;
+            ammo[find].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[find], ammoScales[find]);
+            currentClips++;
+        }
+
+
+        //For reference
+        /*GameObject a = GetAmmoForLoad(i);
+        ammo[i] = Instantiate(a);
+        ammo[i].transform.parent = gameObject.transform;
+        ammo[i].transform.localPosition = ammoAnimStartPos;
+        ammo[i].transform.localScale = Vector3.zero;
+        ammo[i].GetComponent<AmmoType>().SetMovementGoal(ammoPositions[i], ammoScales[i]);
+        currentClips++;*/
     }
 
     GameObject GetAmmoType(int ammo)

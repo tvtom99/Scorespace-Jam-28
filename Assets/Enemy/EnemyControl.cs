@@ -5,6 +5,9 @@ public class EnemyControl : MonoBehaviour
     private GameObject[] enemyList;
 
     [SerializeField]
+    int initialEnemies = 1, maxEnemies = 4;
+
+    [SerializeField]
     Transform playerPos;
 
     [SerializeField]
@@ -13,12 +16,9 @@ public class EnemyControl : MonoBehaviour
     [SerializeField]
     Player player;
 
-    [SerializeField]
-    GameObject bulletPrefab;
-
     void Start()
     {
-        Debug.Log("Start of enemy control!");
+        /*Debug.Log("Start of enemy control!");
 
         enemyList = new GameObject[1];
 
@@ -28,6 +28,21 @@ public class EnemyControl : MonoBehaviour
         //ne.SetPlayer(player);
         enemyList[0].GetComponent<NewEnemy>().SetPlayer(player);
         enemyList[0].GetComponent<NewEnemy>().SetBulletPrefab(bulletPrefab);
-        Debug.Log("Enemy should be instantiated");
+        Debug.Log("Enemy should be instantiated");*/
+        SpawnEnemies();
+    }
+
+
+    void SpawnEnemies()
+    {
+        enemyList = new GameObject[initialEnemies];
+
+        for(int i = 0; i < enemyList.Length; i++)
+        {
+            Vector2 randomRange = new Vector2(Random.Range(0f, 1f), Random.Range(0f, 1f));
+
+            enemyList[i] = Instantiate(enemyPrefab, Vector2.zero + randomRange, Quaternion.identity);
+            enemyList[i].GetComponent<NewEnemy>().SetPlayer(player);
+        }
     }
 }

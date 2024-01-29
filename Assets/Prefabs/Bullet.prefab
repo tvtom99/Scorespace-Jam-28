@@ -161,5 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a73f61914e8ad48bdd0f4d55019207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToPop: 1
+  timeToPop: 2
   slowDown: 1.01
+  playerAmmo: {fileID: 0}

@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
     public float bulletForce = 20f;
 
     [SerializeField]
+    Vector2 firePointOffset;
+
+    [SerializeField]
     float bulletDistFromPlayer = 3f;
 
     GunBehaviour.IShoot gun = GunBehaviour.GetBehaviour(0);
@@ -33,7 +36,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     AmmoController ammoController;
 
+    [SerializeField]
+    Animator animator;
+
     bool canShoot = true;
+
+    bool direction = true; //true = left, false = right
 
     delegate void Shoot();
 
@@ -87,6 +95,23 @@ public class Player : MonoBehaviour
         }
 
         body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+        animator.SetFloat("moveSpeed", Mathf.Abs(((body.velocity.x + body.velocity.y) / 2f)));
+
+        UpdateBodyDirection();
+    }
+
+    void UpdateBodyDirection()
+    {
+        if(body.velocity.x > 0.1)
+        {
+            direction = true;
+        }
+        else if(body.velocity.x < -0.1)
+        {
+            direction = false;
+        }
+
+        gameObject.GetComponent<SpriteRenderer>().flipX = direction;
     }
 
     void ShootGun()
@@ -101,8 +126,17 @@ public class Player : MonoBehaviour
         mousePos = camera.ScreenToWorldPoint(mousePos);
         //Uncomment for debug; Debug.Log("World mouse pos: " + mousePos);
 
+        //Find out if the direction is left or right and thus if the offset should be inversed
+        if(direction)
+        {
+            firePointOffset.x = -firePointOffset.x;
+        }
+
         //Create new Vector2 for where the bullet will fire from
-        Vector2 fireFrom = new Vector2(firePoint.position.x, firePoint.position.y);
+        Vector2 fireFrom = new Vector2(firePoint.position.x + firePointOffset.x, firePoint.position.y + firePointOffset.y);
+
+        //Put it back to regular so it doesn't fk with anything next time we inverse
+        firePointOffset.x = -firePointOffset.x;
 
         //Get a vector 'pointing' from fire position to mouse
         mousePos -= fireFrom;
@@ -119,8 +153,11 @@ public class Player : MonoBehaviour
         //Add the final bullet position to the fireFrom vector
         fireFrom += mousePos;
 
-        //Call the shoot method of whatever gun is currently being used        
-        if (canShoot && ammoController.GetCurrentAmmo().GetComponent<AmmoType>().HasAmmo())
+        //Call the shoot method of whatever gun is currently being used
+
+        GameObject currentAmmoType = ammoController.GetCurrentAmmo();
+
+        if (canShoot && currentAmmoType != null && ammoController.GetCurrentAmmo().GetComponent<AmmoType>().HasAmmo())
         {
             canShoot = false;
             Debug.Log("gunBehaviour: " + ammoController.GetCurrentAmmo().GetComponent<AmmoType>().GetGunType());
@@ -129,8 +166,7 @@ public class Player : MonoBehaviour
             if (currentAmmo != null)
             {
                 gun = GunBehaviour.GetBehaviour(currentAmmo.GetComponent<AmmoType>().GetGunType());
-                gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this, ammoController);
-                Debug.Log("Current gun: " + currentAmmo.GetComponent<AmmoType>().GetGunType() + ". current shooting gun: " + gun.GetGunNumber());
+                gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this, ammoController, 20f);
                 StartCoroutine(GunWait(gunDelay[currentAmmo.GetComponent<AmmoType>().GetGunType()]));
                 currentAmmo.GetComponent<AmmoType>().UseAmmo();
                 //StartCoroutine(GunWait(gunDelay[gun.GetGunNumber()]));        So apparently 'gun.GetGunNumber()' is scuffed and is returning the wrong number. Instead of fixing it I'll use another function that does that same thing LOLOLLO>
