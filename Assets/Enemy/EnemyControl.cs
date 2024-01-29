@@ -23,7 +23,7 @@ public class EnemyControl : MonoBehaviour
     [SerializeField]
     GameObject[] spawnPoints;
 
-    float timerTimerInit = 5f, floatTimer = 5f;
+    float timerTimerInit = 5f, timerTime = 5f;
 
     public bool gameOver = false;
 
@@ -46,7 +46,7 @@ public class EnemyControl : MonoBehaviour
         enemyList[0].GetComponent<NewEnemy>().SetPlayer(player);
         enemyList[0].GetComponent<NewEnemy>().SetBulletPrefab(bulletPrefab);
         Debug.Log("Enemy should be instantiated");*/
-        floatTimer = timerTimerInit;    //what are these variables
+        timerTime = timerTimerInit;    //what are these variables
         gameOver = false;
         enemyList = new GameObject[maxEnemies];
         SpawnEnemies();
