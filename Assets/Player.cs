@@ -39,6 +39,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     Animator animator;
 
+    [SerializeField]
+    Highscore highscore;
+
     bool canShoot = true;
 
     bool direction = true; //true = left, false = right

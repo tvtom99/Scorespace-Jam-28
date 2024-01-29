@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3608925597092728483}
   - component: {fileID: 3102327541763433204}
   - component: {fileID: 3455858018305294532}
+  - component: {fileID: -5641098373530075082}
   m_Layer: 6
   m_Name: Pistol Pickup
   m_TagString: Untagged
@@ -174,3 +175,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.32, y: 0.32}
   m_EdgeRadius: 0
+--- !u!114 &-5641098373530075082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3165277961422708430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04c61d3604c1f9d4394ce83ed19b0e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  someValue: 0
