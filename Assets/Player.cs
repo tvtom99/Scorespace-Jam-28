@@ -29,6 +29,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     float[] gunDelay = {0.5f, 2f, 1f, 1f };   //Pistol, Shotgun, Machine Gun, Sniper
 
+    [SerializeField]
+    AmmoController ammoController;
+
     bool canShoot = true;
 
     delegate void Shoot();
@@ -119,7 +122,7 @@ public class Player : MonoBehaviour
         if (canShoot)
         {
             canShoot = false;
-            gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this);
+            gun.Shoot(fireFrom, mousePos, bulletPrefab, Quaternion.identity, this, ammoController);
             StartCoroutine(GunWait(gunDelay[gun.GetGunNumber()]));
         }
         else

@@ -5,7 +5,7 @@ public class GunBehaviour : MonoBehaviour
 {
     public interface IShoot
     {
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b);
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController ammoController);
         public int GetGunNumber();
     }
 
@@ -43,11 +43,12 @@ public class GunBehaviour : MonoBehaviour
         }
 
 
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a)
         {
             float bulletForce = 20f;
 
             GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
+            SetBulletAmmoController(bullet, a);
             Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
             bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
         }
@@ -59,7 +60,7 @@ public class GunBehaviour : MonoBehaviour
         {
             return 2;   //Shotgun = 2
         }
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a)
         {
             float bulletForce = 20f;    //Speed of bullet
             float bulletSpread = 0.1f;  //How close together bullets are when fired
@@ -68,6 +69,7 @@ public class GunBehaviour : MonoBehaviour
             for (int i = 0; i < bulletAmount; i++)
             {
                 GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
+                SetBulletAmmoController(bullet, a);
                 Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
                 Vector2 bulletPos;  //Bullet pos will create a random variation on the mousePos within a spread, so the bullets come out more like a shotgun
                 bulletPos.x = Random.Range(mousePos.x - bulletSpread, mousePos.x + bulletSpread);
@@ -84,16 +86,16 @@ public class GunBehaviour : MonoBehaviour
             return 3;   //Machinegun = 3
         }
 
-        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b)
+        public void Shoot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, MonoBehaviour b, AmmoController a)
         {
             float bulletForce = 20f;
 
             //Create Coroutine that will cause the bellow function to be called with the ability to pause itself during running
-            IEnumerator co = MultiShot(firePos, mousePos, bulletPrefab, rotation, bulletForce, b);
+            IEnumerator co = MultiShot(firePos, mousePos, bulletPrefab, rotation, bulletForce, b, a);
             b.StartCoroutine(co);   //Must use reference to a MonoBehaviour, so that is passed in this function
         }
 
-        private IEnumerator MultiShot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, float bulletForce, MonoBehaviour b)
+        private IEnumerator MultiShot(Vector2 firePos, Vector2 mousePos, GameObject bulletPrefab, Quaternion rotation, float bulletForce, MonoBehaviour b, AmmoController a)
         {
             int clipSize = 10;
             float waitTime = 0.01f;
@@ -103,10 +105,16 @@ public class GunBehaviour : MonoBehaviour
                 firePos = (Vector2)b.GetComponent<Transform>().position + mousePos; //Update the position to fire from incase the player has moved
 
                 GameObject bullet = Instantiate(bulletPrefab, firePos, rotation);
+                SetBulletAmmoController(bullet, a);
                 Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
                 bulletRb.AddForce(mousePos * bulletForce, ForceMode2D.Impulse);
                 yield return new WaitForSeconds(waitTime);  //After creating bullets, pause for a time before creating next bullet
             }
         }
+    }
+
+    public static void SetBulletAmmoController(GameObject bullet, AmmoController a)
+    {
+        bullet.GetComponent<Bullet>().SetAmmoController(a);
     }
 }

@@ -31,6 +31,22 @@ public class NewEnemy : MonoBehaviour
         //Get a random gun
         int gunInt = (int)Random.Range(0, 4);
         gun = GunBehaviour.GetBehaviour(gunInt);
+
+        switch(gunInt)
+        {
+            case 0:
+                gameObject.GetComponent<SpriteRenderer>().color = Color.white; 
+                break;
+            case 1:
+                gameObject.GetComponent<SpriteRenderer>().color = Color.red; 
+                break;
+            case 2:
+                gameObject.GetComponent<SpriteRenderer>().color = Color.blue; 
+                break;
+            case 3:
+                gameObject.GetComponent<SpriteRenderer>().color = Color.cyan; 
+                break;
+        }
     }
 
     // Update is called once per frame
@@ -64,7 +80,7 @@ public class NewEnemy : MonoBehaviour
 
     IEnumerator TakeShot(Vector2 firePos, Vector2 playerPos, GameObject bulletPrefab, Quaternion q, MonoBehaviour m)
     {
-        gun.Shoot(firePos, playerPos, bulletPrefab, Quaternion.identity, this);
+        gun.Shoot(firePos, playerPos, bulletPrefab, Quaternion.identity, this, null);   //I should probably have the enemies shoot diff bullets hey
         yield return new WaitForSeconds(1f);
         canShoot = true;
     }

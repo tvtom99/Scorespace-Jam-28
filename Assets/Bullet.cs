@@ -9,6 +9,9 @@ public class Bullet : MonoBehaviour
     [SerializeField, Range(1f,2f)]
     float slowDown = 1.02f;
 
+    [SerializeField]
+    AmmoController playerAmmo;
+
     private void Awake()
     {
         StartCoroutine(PopBullet(timeToPop));
@@ -29,12 +32,13 @@ public class Bullet : MonoBehaviour
                 gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             }
         }
-
-        timeToPop--;
     }
 
-    void OnCollisionEnter2D()
+    void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("collided with: " + collision.gameObject);
+
+        
         //Destroy(gameObject);      find better way for this cause atm the bullets are destorying themselves lol
     }
 
@@ -42,5 +46,10 @@ public class Bullet : MonoBehaviour
     {
         yield return new WaitForSeconds(timeToPop);
         Destroy(gameObject);
+    }
+
+    public void SetAmmoController(AmmoController a)
+    {
+        this.playerAmmo = a; 
     }
 }
