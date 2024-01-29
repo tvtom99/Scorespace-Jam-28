@@ -6,7 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    Camera camera;
+    public Camera camera;
 
     float extents = 0.5f;
     
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     GunBehaviour.IShoot gun = GunBehaviour.GetBehaviour(0);
 
     [SerializeField]
-    float[] gunDelay = {0.5f, 2f, 1f, 1f };   //Pistol, Shotgun, Machine Gun, Sniper
+    float[] gunDelay = {0.5f, 1.5f, 1f, 1.5f };   //Pistol, Shotgun, Machine Gun, Sniper
 
     [SerializeField]
     AmmoController ammoController;

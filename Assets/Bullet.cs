@@ -41,8 +41,18 @@ public class Bullet : MonoBehaviour
     {
         Debug.Log("collided with: " + collision.gameObject);
 
-        
-        //Destroy(gameObject);      find better way for this cause atm the bullets are destorying themselves lol
+        Debug.Log("was it an enemy?:" + collision.gameObject.GetComponent<NewEnemy>());
+
+        if (collision.gameObject.GetComponent<NewEnemy>() != null)    //if hit enemy
+        {
+            collision.gameObject.GetComponent<NewEnemy>().TakeDamage();
+            Destroy(gameObject);
+        }
+        else if(collision.gameObject.GetComponent<Bullet>() == null)    //if hit anything other than bullet
+        {
+            //Probs play the pop animation first, then set a coroutine timer to destroy the bullet
+            Destroy(gameObject);
+        }
     }
 
     IEnumerator PopBullet(float timeToPop)
